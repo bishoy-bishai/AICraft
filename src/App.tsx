@@ -1,5 +1,26 @@
 import { Reveal } from "@/components/reveal";
+import { CopyBlock } from "@/components/copy-block";
 import { LoopStackInteractor } from "@/components/ui/loop-stack-interactor";
+
+const REPO = "https://github.com/bishoy-bishai/AICraft.git";
+
+const claudeCodeInstall = `git clone --depth 1 --filter=blob:none --sparse ${REPO} /tmp/aicraft-skill
+cd /tmp/aicraft-skill && git sparse-checkout set skill
+
+mkdir -p ~/.claude/skills/aicraft
+cp -R skill/. ~/.claude/skills/aicraft/
+
+# then, inside Claude Code:
+# /aicraft`;
+
+const codexInstall = `git clone --depth 1 --filter=blob:none --sparse ${REPO} /tmp/aicraft-skill
+cd /tmp/aicraft-skill && git sparse-checkout set skill
+
+# Codex has no skill picker — it reads AGENTS.md as standing
+# instructions. Append AICraft globally (every project) or drop the
+# same lines into a single project's AGENTS.md instead:
+mkdir -p ~/.codex
+cat skill/SKILL.md skill/skills/*.md >> ~/.codex/AGENTS.md`;
 
 const principles = [
   {
@@ -109,6 +130,9 @@ function App() {
             <a href="#never" className="font-medium text-muted-foreground hover:text-foreground">
               Ground Rules
             </a>
+            <a href="#install" className="font-medium text-primary hover:text-primary/80">
+              Install
+            </a>
           </div>
         </div>
       </nav>
@@ -138,10 +162,10 @@ function App() {
           </p>
           <div className="flex flex-wrap gap-3">
             <a
-              href="#philosophy"
+              href="#install"
               className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110 hover:-translate-y-0.5"
             >
-              Read the Philosophy
+              Install the Skill
             </a>
             <a
               href="#loop"
@@ -304,6 +328,53 @@ function App() {
         </div>
       </section>
 
+      <section id="install" className="border-b border-border/70 px-6 py-20">
+        <div className="mx-auto max-w-[880px]">
+          <Reveal as="p" className="mb-3 font-mono text-xs font-semibold tracking-[0.12em] text-primary uppercase">
+            Get It
+          </Reveal>
+          <Reveal as="h2" className="mb-4 text-3xl font-bold tracking-tight">
+            Install the skill.
+          </Reveal>
+          <Reveal as="p" className="mb-10 max-w-[640px] text-[1.05rem] text-muted-foreground">
+            AICraft ships as a plain package of Markdown — a <code className="rounded bg-card px-1.5 py-0.5 font-mono text-[0.85em]">SKILL.md</code> entry
+            point plus nine focused guides under <code className="rounded bg-card px-1.5 py-0.5 font-mono text-[0.85em]">skill/skills/</code>. No
+            runtime, no dependencies. Pull it straight from this repo.
+          </Reveal>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <Reveal>
+              <h3 className="mb-1 text-lg font-bold tracking-tight">Claude Code</h3>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Copies the package into <code className="rounded bg-card px-1.5 py-0.5 font-mono text-[0.85em]">~/.claude/skills/aicraft/</code>,
+                where Claude Code's skill picker finds it automatically.
+              </p>
+              <CopyBlock code={claudeCodeInstall} />
+            </Reveal>
+
+            <Reveal>
+              <h3 className="mb-1 text-lg font-bold tracking-tight">Codex</h3>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Codex has no skill picker, so AICraft folds into{" "}
+                <code className="rounded bg-card px-1.5 py-0.5 font-mono text-[0.85em]">AGENTS.md</code> as
+                standing instructions instead — global or per-project.
+              </p>
+              <CopyBlock code={codexInstall} />
+            </Reveal>
+          </div>
+
+          <Reveal as="p" className="mt-8 text-sm text-muted-foreground">
+            Prefer to read it first?{" "}
+            <a
+              href={`${REPO.replace(/\.git$/, "")}/tree/main/skill`}
+              className="text-primary hover:underline"
+            >
+              Browse the skill source on GitHub ↗
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
       <footer className="px-6 py-16 text-center">
         <Reveal className="flex items-center justify-center gap-2.5 text-[15px] font-bold tracking-tight">
           <span className="h-2 w-2 rounded-[2px] bg-primary shadow-[0_0_12px_var(--primary)]" />
@@ -316,6 +387,7 @@ function App() {
           <a href="#loop" className="text-primary hover:underline">The Loop</a>
           <a href="#philosophy" className="text-primary hover:underline">Philosophy</a>
           <a href="#never" className="text-primary hover:underline">Ground Rules</a>
+          <a href="#install" className="text-primary hover:underline">Install</a>
         </div>
       </footer>
     </div>
