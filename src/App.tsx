@@ -18,9 +18,11 @@ cd /tmp/aicraft-skill && git sparse-checkout set skill
 
 # Codex has no skill picker — it reads AGENTS.md as standing
 # instructions. Append AICraft globally (every project) or drop the
-# same lines into a single project's AGENTS.md instead:
+# same lines into a single project's AGENTS.md instead. The tail
+# strips SKILL.md's Claude-only frontmatter (the first 4 lines).
 mkdir -p ~/.codex
-cat skill/SKILL.md skill/skills/*.md >> ~/.codex/AGENTS.md`;
+tail -n +5 skill/SKILL.md >> ~/.codex/AGENTS.md
+cat skill/skills/*.md >> ~/.codex/AGENTS.md`;
 
 const principles = [
   {
