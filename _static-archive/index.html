@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AICraft — AI Engineering Discipline</title>
+<meta name="description" content="AICraft teaches AI coding agents to work like an experienced engineering team: learn the codebase, decide before coding, ship the smallest correct change.">
+<style>
+  :root{
+    --bg:#0b0d10;
+    --bg-elevated:#12151a;
+    --bg-card:#151920;
+    --border:#232833;
+    --border-soft:#1c2027;
+    --text:#e7eaee;
+    --text-dim:#a6adba;
+    --text-faint:#6b7280;
+    --accent:#7cf29c;
+    --accent-dim:#3fae67;
+    --accent-soft:rgba(124,242,156,0.1);
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --radius: 10px;
+    --maxw: 880px;
+  }
+
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#fbfbfa;
+      --bg-elevated:#ffffff;
+      --bg-card:#f4f4f2;
+      --border:#e3e3e0;
+      --border-soft:#ececea;
+      --text:#1b1d1f;
+      --text-dim:#54585e;
+      --text-faint:#8a8f96;
+      --accent:#15803d;
+      --accent-dim:#0f6e33;
+      --accent-soft:rgba(21,128,61,0.08);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:60px;max-width:1040px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-weight:700;font-size:16px;color:var(--text);letter-spacing:-0.01em;
+  }
+  .brand .dot{
+    width:9px;height:9px;border-radius:2px;background:var(--accent);
+    box-shadow:0 0 12px var(--accent);
+  }
+  .navlinks{display:flex;gap:28px;font-size:14px;}
+  .navlinks a{color:var(--text-dim);font-weight:500;}
+  .navlinks a:hover{color:var(--text);text-decoration:none;}
+  .navlinks .gh{color:var(--text);}
+
+  /* Hero */
+  header.hero{padding:96px 0 72px;border-bottom:1px solid var(--border-soft);}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:12px;color:var(--accent);
+    background:var(--accent-soft);border:1px solid var(--border);
+    padding:5px 12px;border-radius:100px;margin-bottom:24px;
+    letter-spacing:0.02em;
+  }
+  h1{
+    font-size:clamp(2.4rem,5vw,3.6rem);
+    line-height:1.08;
+    margin:0 0 20px;
+    letter-spacing:-0.03em;
+    font-weight:700;
+  }
+  h1 em{
+    font-style:normal;
+    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .lede{
+    font-size:1.2rem;color:var(--text-dim);max-width:620px;margin:0 0 36px;
+    font-weight:400;
+  }
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;
+    border:1px solid var(--border);transition:all .15s ease;
+  }
+  .btn:hover{text-decoration:none;}
+  .btn-primary{
+    background:var(--accent);color:#04140a;border-color:var(--accent);
+  }
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);}
+  .btn-ghost{background:var(--bg-card);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text-faint);transform:translateY(-1px);}
+  .btn code{font-family:var(--mono);font-size:13px;opacity:0.85;}
+
+  /* Sections */
+  section{padding:72px 0;border-bottom:1px solid var(--border-soft);}
+  section:last-of-type{border-bottom:none;}
+  .kicker{
+    font-family:var(--mono);font-size:12px;text-transform:uppercase;
+    letter-spacing:0.12em;color:var(--accent);margin:0 0 12px;font-weight:600;
+  }
+  h2{font-size:2rem;letter-spacing:-0.02em;margin:0 0 16px;font-weight:700;}
+  .section-lede{color:var(--text-dim);max-width:640px;font-size:1.05rem;margin-bottom:40px;}
+
+  .problem-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:32px;}
+  .problem-card{
+    background:var(--bg-card);border:1px solid var(--border-soft);
+    border-radius:var(--radius);padding:20px 24px;
+  }
+  .problem-card .label{font-family:var(--mono);font-size:12px;color:var(--text-faint);margin-bottom:6px;}
+  .problem-card p{margin:0;color:var(--text-dim);}
+  .problem-card.strike p{color:var(--text-faint);}
+  .problem-card.win{border-color:var(--accent-dim);background:var(--accent-soft);}
+  .problem-card.win p{color:var(--text);}
+
+  /* Building diagram */
+  .building-wrap{
+    margin-top:24px;
+    height:280vh;
+    max-height:2400px;
+    position:relative;
+  }
+  .building-pin{
+    position:sticky;top:88px;
+    height:calc(100vh - 120px);
+    max-height:760px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .building-svg{
+    width:100%;max-width:420px;height:100%;
+    overflow:visible;
+    display:block;margin:0 auto;
+  }
+
+  .ground{stroke:var(--border);stroke-width:2;}
+  .scaffold{
+    stroke:var(--border);stroke-width:2;stroke-dasharray:5 7;
+    stroke-linecap:round;
+  }
+
+  .floor{
+    opacity:0;
+    transform:translateY(26px) scaleY(0.7);
+    transform-box:fill-box;
+    transform-origin:bottom center;
+    transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1);
+  }
+  .floor.built{opacity:1;transform:translateY(0) scaleY(1);}
+
+  .floor .body{
+    fill:var(--bg-card);stroke:var(--border);stroke-width:1.5;
+    transition:stroke .3s ease,fill .3s ease;
+  }
+  .floor.built .body{stroke:var(--border);}
+  .floor .body.foundation{fill:var(--bg-elevated);stroke:var(--accent-dim);stroke-width:2;}
+
+  .floor .win{
+    fill:var(--bg);stroke:var(--border);stroke-width:1;
+    transition:fill .5s ease .15s,stroke .5s ease .15s;
+  }
+  .floor.built .win{fill:var(--accent-soft);stroke:var(--accent-dim);}
+
+  .floor .num{
+    font-family:var(--mono);font-size:12px;fill:var(--accent);
+    letter-spacing:0.04em;
+  }
+  .floor .label{
+    font-family:var(--sans);font-size:15px;font-weight:700;fill:var(--text);
+    letter-spacing:-0.01em;
+  }
+  .floor .sub{
+    font-family:var(--mono);font-size:10px;fill:var(--text-faint);letter-spacing:0.1em;
+  }
+
+  .floor.roof{transform-origin:bottom center;}
+  .roof-shape{fill:var(--bg-card);stroke:var(--accent-dim);stroke-width:2;}
+  .pole{stroke:var(--border);stroke-width:2;}
+  .flag{fill:var(--accent);}
+
+  .loop-caption{
+    font-family:var(--mono);font-size:12px;fill:var(--text-faint);
+    opacity:0;transition:opacity .6s ease;
+  }
+  .loop-caption.built{opacity:1;}
+
+  @media (max-width:640px){
+    .building-wrap{height:340vh;}
+    .building-pin{top:68px;}
+  }
+
+  /* Principles */
+  .principle{
+    padding:32px 0;border-top:1px solid var(--border-soft);
+    display:grid;grid-template-columns:64px 1fr;gap:24px;
+  }
+  .principle:first-child{border-top:none;padding-top:8px;}
+  .principle .num{
+    font-family:var(--mono);font-size:1.6rem;color:var(--border);font-weight:700;
+    line-height:1;
+  }
+  .principle h3{font-size:1.2rem;margin:0 0 10px;letter-spacing:-0.01em;}
+  .principle p{color:var(--text-dim);margin:0 0 12px;}
+  .principle ul{margin:10px 0;padding-left:20px;color:var(--text-dim);}
+  .principle li{margin-bottom:4px;}
+  .principle .quote{
+    font-family:var(--mono);font-size:13px;color:var(--accent);
+    border-left:2px solid var(--accent-dim);padding-left:12px;margin-top:12px;
+  }
+  .flow-inline{
+    font-family:var(--mono);font-size:13px;color:var(--text-dim);
+    display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:14px;
+    background:var(--bg-card);border:1px solid var(--border-soft);
+    padding:14px 16px;border-radius:8px;
+  }
+  .flow-inline .arrow{color:var(--text-faint);}
+  .flow-inline .hi{color:var(--accent);}
+
+  /* Ownership table */
+  .owners{margin-top:14px;border:1px solid var(--border-soft);border-radius:8px;overflow:hidden;}
+  .owner-row{
+    display:grid;grid-template-columns:180px 1fr;
+    border-top:1px solid var(--border-soft);font-size:14px;
+  }
+  .owner-row:first-child{border-top:none;}
+  .owner-row .k{
+    padding:12px 16px;font-family:var(--mono);color:var(--accent);
+    background:var(--bg-card);
+  }
+  .owner-row .v{padding:12px 16px;color:var(--text-dim);}
+
+  /* Not entities */
+  .not-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px;}
+  .not-row{
+    display:flex;align-items:baseline;gap:10px;font-size:14px;
+    padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-soft);
+    border-radius:8px;color:var(--text-dim);
+  }
+  .not-row b{color:var(--text);font-weight:600;}
+  .not-row .no{color:#f97583;font-family:var(--mono);font-size:12px;}
+
+  /* Never section */
+  .never-list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px;}
+  .never-list li{
+    display:flex;gap:12px;align-items:flex-start;
+    background:var(--bg-card);border:1px solid var(--border-soft);
+    border-radius:8px;padding:14px 16px;color:var(--text-dim);font-size:14.5px;
+  }
+  .never-list .x{
+    font-family:var(--mono);color:#f97583;flex-shrink:0;font-weight:700;
+  }
+  .evidence{
+    margin-top:24px;text-align:center;font-family:var(--mono);
+    font-size:14px;color:var(--accent);letter-spacing:0.02em;
+  }
+
+  /* Footer */
+  footer{padding:56px 0 80px;text-align:center;}
+  footer .brand{justify-content:center;margin-bottom:16px;}
+  footer p{color:var(--text-faint);font-size:14px;margin:0;}
+  footer .links{margin-top:18px;display:flex;gap:20px;justify-content:center;font-size:14px;}
+
+  code, .mono{font-family:var(--mono);}
+
+  @media (min-width:640px){
+    .problem-grid{grid-template-columns:1fr 1fr;}
+    .not-grid{grid-template-columns:1fr 1fr;}
+  }
+
+  /* Motion */
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(16px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @keyframes drift{
+    0%,100%{transform:translate(0,0);}
+    50%{transform:translate(-2%,3%);}
+  }
+  @keyframes pulseGlow{
+    0%,100%{box-shadow:0 0 12px var(--accent);}
+    50%{box-shadow:0 0 22px var(--accent);}
+  }
+  @keyframes flowDash{
+    to{stroke-dashoffset:-24;}
+  }
+
+  .hero-bg{
+    position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;
+  }
+  .hero-bg span{
+    position:absolute;border-radius:50%;filter:blur(60px);opacity:0.35;
+    background:radial-gradient(circle,var(--accent),transparent 70%);
+    animation:drift 14s ease-in-out infinite;
+  }
+  .hero-bg span:nth-child(1){width:340px;height:340px;top:-120px;left:8%;}
+  .hero-bg span:nth-child(2){width:260px;height:260px;top:20px;right:6%;animation-duration:18s;animation-delay:-4s;}
+  header.hero{position:relative;overflow:hidden;}
+
+  .brand .dot{animation:pulseGlow 3.2s ease-in-out infinite;}
+
+  header.hero .eyebrow,
+  header.hero h1,
+  header.hero .lede,
+  header.hero .cta-row{
+    opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  header.hero .eyebrow{animation-delay:.05s;}
+  header.hero h1{animation-delay:.15s;}
+  header.hero .lede{animation-delay:.32s;}
+  header.hero .cta-row{animation-delay:.46s;}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  .problem-card, .not-row, .never-list li, .flow-inline, .owner-row{
+    transition:border-color .2s ease,transform .2s ease;
+  }
+  .problem-card:hover{border-color:var(--text-faint);transform:translateY(-2px);}
+  .problem-card.win:hover{border-color:var(--accent);}
+  .not-row:hover, .never-list li:hover{border-color:var(--accent-dim);transform:translateX(2px);}
+
+  .principle{transition:opacity .15s ease;}
+  .principle .num{transition:color .25s ease,transform .25s ease;}
+  .principle:hover .num{color:var(--accent-dim);transform:translateX(2px);}
+
+  .btn-primary{position:relative;overflow:hidden;}
+  .btn-primary::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+    transform:translateX(-120%);transition:transform .6s ease;
+  }
+  .btn-primary:hover::after{transform:translateX(120%);}
+
+  .evidence{opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease;}
+  .evidence.in{opacity:1;transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+    header.hero .eyebrow, header.hero h1, header.hero .lede, header.hero .cta-row,
+    .reveal, .floor, .loop-caption, .evidence{opacity:1 !important;transform:none !important;}
+    .building-wrap{height:auto;}
+    .building-pin{position:static;height:auto;max-height:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>AICraft</div>
+    <div class="navlinks">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#loop">The Loop</a>
+      <a href="#never">Ground Rules</a>
+      <a class="gh" href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-bg" aria-hidden="true"><span></span><span></span></div>
+  <div class="wrap">
+    <div class="eyebrow">● AI Engineering Discipline</div>
+    <h1>Teach AI to work<br>like an <em>experienced</em><br>engineering team.</h1>
+    <p class="lede">AI can already write code. AICraft is the discipline that makes it write code that belongs — in your architecture, your conventions, your codebase.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#philosophy">Read the Philosophy</a>
+      <a class="btn btn-ghost" href="#loop">See the Loop <code>↓</code></a>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <p class="kicker reveal">The Problem</p>
+    <h2 class="reveal">Writing code isn't the hard part anymore.</h2>
+    <p class="section-lede reveal">AI can write code. The hard part is making AI write code that belongs in an existing codebase — matching its style, respecting its boundaries, and not quietly making it worse.</p>
+    <div class="problem-grid reveal">
+      <div class="problem-card strike">
+        <div class="label">WITHOUT DISCIPLINE</div>
+        <p>Agents invent new patterns next to the old ones, bolt on abstractions nobody asked for, and claim things work without checking.</p>
+      </div>
+      <div class="problem-card win">
+        <div class="label">WITH AICRAFT</div>
+        <p>Agents learn the codebase first, decide before coding, ship the smallest correct change, and verify before claiming done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="loop">
+  <div class="wrap">
+    <p class="kicker reveal">The AICraft Loop</p>
+    <h2 class="reveal">Nine stages, one discipline.</h2>
+    <p class="section-lede reveal">Every change — from a one-line fix to a new feature — moves through the same loop. No stage is optional. Scroll to build it, floor by floor.</p>
+
+    <div class="building-wrap">
+      <div class="building-pin">
+        <svg class="building-svg" viewBox="0 0 480 660" preserveAspectRatio="none" aria-label="Nine-stage building diagram: Learn, Understand, Impact, Decide, Plan, Implement, Verify, Review, Simplify">
+          <line class="scaffold" x1="34" y1="620" x2="34" y2="70"/>
+
+          <line class="ground" x1="20" y1="622" x2="460" y2="622"/>
+
+          <g class="floor" data-floor="1">
+            <rect class="body foundation" x="30" y="560" width="420" height="62"/>
+            <text class="num" x="52" y="586">01</text>
+            <text class="label" x="52" y="606">LEARN</text>
+            <text class="sub" x="398" y="600" text-anchor="end">FOUNDATION</text>
+          </g>
+
+          <g class="floor" data-floor="2">
+            <rect class="body" x="60" y="505" width="360" height="55"/>
+            <rect class="win" x="90" y="522" width="26" height="24"/>
+            <rect class="win" x="227" y="522" width="26" height="24"/>
+            <rect class="win" x="364" y="522" width="26" height="24"/>
+            <text class="num" x="82" y="537">02</text>
+            <text class="label" x="112" y="537">UNDERSTAND</text>
+          </g>
+
+          <g class="floor" data-floor="3">
+            <rect class="body" x="60" y="450" width="360" height="55"/>
+            <rect class="win" x="90" y="467" width="26" height="24"/>
+            <rect class="win" x="227" y="467" width="26" height="24"/>
+            <rect class="win" x="364" y="467" width="26" height="24"/>
+            <text class="num" x="82" y="482">03</text>
+            <text class="label" x="112" y="482">IMPACT</text>
+          </g>
+
+          <g class="floor" data-floor="4">
+            <rect class="body" x="60" y="395" width="360" height="55"/>
+            <rect class="win" x="90" y="412" width="26" height="24"/>
+            <rect class="win" x="227" y="412" width="26" height="24"/>
+            <rect class="win" x="364" y="412" width="26" height="24"/>
+            <text class="num" x="82" y="427">04</text>
+            <text class="label" x="112" y="427">DECIDE</text>
+          </g>
+
+          <g class="floor" data-floor="5">
+            <rect class="body" x="60" y="340" width="360" height="55"/>
+            <rect class="win" x="90" y="357" width="26" height="24"/>
+            <rect class="win" x="227" y="357" width="26" height="24"/>
+            <rect class="win" x="364" y="357" width="26" height="24"/>
+            <text class="num" x="82" y="372">05</text>
+            <text class="label" x="112" y="372">PLAN</text>
+          </g>
+
+          <g class="floor" data-floor="6">
+            <rect class="body" x="60" y="285" width="360" height="55"/>
+            <rect class="win" x="90" y="302" width="26" height="24"/>
+            <rect class="win" x="227" y="302" width="26" height="24"/>
+            <rect class="win" x="364" y="302" width="26" height="24"/>
+            <text class="num" x="82" y="317">06</text>
+            <text class="label" x="112" y="317">IMPLEMENT</text>
+          </g>
+
+          <g class="floor" data-floor="7">
+            <rect class="body" x="60" y="230" width="360" height="55"/>
+            <rect class="win" x="90" y="247" width="26" height="24"/>
+            <rect class="win" x="227" y="247" width="26" height="24"/>
+            <rect class="win" x="364" y="247" width="26" height="24"/>
+            <text class="num" x="82" y="262">07</text>
+            <text class="label" x="112" y="262">VERIFY</text>
+          </g>
+
+          <g class="floor" data-floor="8">
+            <rect class="body" x="60" y="175" width="360" height="55"/>
+            <rect class="win" x="90" y="192" width="26" height="24"/>
+            <rect class="win" x="227" y="192" width="26" height="24"/>
+            <rect class="win" x="364" y="192" width="26" height="24"/>
+            <text class="num" x="82" y="207">08</text>
+            <text class="label" x="112" y="207">REVIEW</text>
+          </g>
+
+          <g class="floor" data-floor="9">
+            <rect class="body" x="60" y="120" width="360" height="55"/>
+            <rect class="win" x="90" y="137" width="26" height="24"/>
+            <rect class="win" x="227" y="137" width="26" height="24"/>
+            <rect class="win" x="364" y="137" width="26" height="24"/>
+            <text class="num" x="82" y="152">09</text>
+            <text class="label" x="112" y="152">SIMPLIFY</text>
+          </g>
+
+          <g class="floor roof" data-floor="10">
+            <polygon class="roof-shape" points="150,120 330,120 240,68"/>
+            <line class="pole" x1="240" y1="68" x2="240" y2="34"/>
+            <polygon class="flag" points="240,34 240,50 268,42"/>
+          </g>
+
+          <text class="loop-caption" x="240" y="648" text-anchor="middle">↻ back to LEARN on the next change</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="philosophy">
+  <div class="wrap">
+    <p class="kicker reveal">The Philosophy</p>
+    <h2 class="reveal">Twelve principles.</h2>
+    <p class="section-lede reveal">Together they form the operating discipline AICraft gives to coding agents.</p>
+
+    <div class="principle reveal">
+      <div class="num">01</div>
+      <div>
+        <h3>Learn Before You Change</h3>
+        <p>Before writing code, understand how the codebase is structured, how code is written, how responsibilities are divided, how APIs are designed, how data is persisted, how tests are written, and what conventions already exist.</p>
+        <p class="quote">Existing code is the first source of truth.</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">02</div>
+      <div>
+        <h3>Match the Codebase</h3>
+        <p>AI must learn the project's existing style before generating new code — naming conventions, file organization, architectural patterns, error handling, testing patterns, typing conventions, dependency patterns.</p>
+        <p>Do not impose your preferred style on an existing project.</p>
+        <p class="quote">Learn the style. Do not blindly copy defects.</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">03</div>
+      <div>
+        <h3>Understand Before Planning</h3>
+        <p>Before creating tasks or implementation plans, identify the actual requirement, affected areas, existing primitives, ownership boundaries, constraints, dependencies, and risks.</p>
+        <p class="quote">No guessing.</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">04</div>
+      <div>
+        <h3>Decide Before Coding</h3>
+        <p>Architecture decisions come before implementation. Ask: do we really need a new entity? A new abstraction? Can an existing primitive solve this? Is this capability actually an entity? What's the simplest design that satisfies the requirement?</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">05</div>
+      <div>
+        <h3>Smallest Correct Change</h3>
+        <p>AICraft prefers the smallest change that correctly solves the problem — not the most sophisticated implementation possible.</p>
+        <p class="quote">No speculative features. No unnecessary abstractions. No unrelated refactoring.</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">06</div>
+      <div>
+        <h3>Code Should Tell the Story</h3>
+        <p>Good code should make the flow obvious. The reader shouldn't need to understand the entire system to understand one feature.</p>
+        <div class="flow-inline">
+          <span class="hi">Request</span><span class="arrow">→</span>
+          <span>Authorization</span><span class="arrow">→</span>
+          <span>Validation</span><span class="arrow">→</span>
+          <span>Business Rule</span><span class="arrow">→</span>
+          <span>Persistence</span><span class="arrow">→</span>
+          <span class="hi">Response</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">07</div>
+      <div>
+        <h3>Every Abstraction Must Earn Its Existence</h3>
+        <p>Before introducing a service, repository, interface, factory, adapter, manager, helper, utility, wrapper, or generic base class — ask what problem it solves today.</p>
+        <p class="quote">If the answer is "future flexibility" — don't add it.</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">08</div>
+      <div>
+        <h3>Capabilities Are Not Entities</h3>
+        <p>First ask whether a capability can operate over existing primitives, before modeling it as a new one.</p>
+        <div class="not-grid">
+          <div class="not-row"><span class="no">✗</span><b>Search</b>&nbsp;doesn't automatically need a Search entity.</div>
+          <div class="not-row"><span class="no">✗</span><b>Upload</b>&nbsp;doesn't automatically need another knowledge model.</div>
+          <div class="not-row"><span class="no">✗</span><b>Caching</b>&nbsp;doesn't automatically need a Cache entity.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">09</div>
+      <div>
+        <h3>Ownership Must Be Explicit</h3>
+        <p>Every responsibility has an owner. Don't let responsibilities leak across boundaries.</p>
+        <div class="owners">
+          <div class="owner-row"><div class="k">Presentation</div><div class="v">UI behavior</div></div>
+          <div class="owner-row"><div class="k">Application</div><div class="v">Orchestration</div></div>
+          <div class="owner-row"><div class="k">Domain</div><div class="v">Business meaning / rules</div></div>
+          <div class="owner-row"><div class="k">Data</div><div class="v">Persistence</div></div>
+          <div class="owner-row"><div class="k">Infrastructure</div><div class="v">External systems</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">10</div>
+      <div>
+        <h3>Testing Is Part of Engineering</h3>
+        <p>A feature isn't complete because the implementation exists. The appropriate behavior must be verified through unit, integration, API, or E2E tests, depending on the feature boundary.</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">11</div>
+      <div>
+        <h3>Review the Engineering, Not Personal Preference</h3>
+        <p>Reviews should be based on requirements, architecture, correctness, security, data integrity, maintainability, and testing — not "I would have written it differently."</p>
+      </div>
+    </div>
+
+    <div class="principle reveal">
+      <div class="num">12</div>
+      <div>
+        <h3>AI Must Not Pretend</h3>
+        <p>Evidence over assumption, always.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="never">
+  <div class="wrap">
+    <p class="kicker reveal">Ground Rules</p>
+    <h2 class="reveal">The AI must never claim…</h2>
+    <ul class="never-list reveal">
+      <li><span class="x">✗</span>tests passed when they weren't run</li>
+      <li><span class="x">✗</span>an integration works when it wasn't verified</li>
+      <li><span class="x">✗</span>a requirement exists when it wasn't specified</li>
+      <li><span class="x">✗</span>a file was changed when it wasn't</li>
+      <li><span class="x">✗</span>an architecture decision was approved when it wasn't</li>
+    </ul>
+    <div class="evidence">Evidence over assumption.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand reveal"><span class="dot"></span>AICraft</div>
+    <p>An AI engineering discipline for coding agents that work in real codebases.</p>
+    <div class="links">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#loop">The Loop</a>
+      <a href="#never">Ground Rules</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var targets = document.querySelectorAll(".reveal, .evidence");
+  if (reduced || !("IntersectionObserver" in window)) {
+    targets.forEach(function (el) { el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+    targets.forEach(function (el) { io.observe(el); });
+  }
+
+  var buildingWrap = document.querySelector(".building-wrap");
+  var scaffold = document.querySelector(".scaffold");
+  var caption = document.querySelector(".loop-caption");
+  var floors = Array.prototype.slice.call(document.querySelectorAll(".floor"));
+  var scaffoldLen = 0;
+
+  if (scaffold) {
+    scaffoldLen = scaffold.getTotalLength();
+    scaffold.style.strokeDasharray = String(scaffoldLen);
+    scaffold.style.strokeDashoffset = String(scaffoldLen);
+  }
+
+  if (reduced || !buildingWrap) {
+    floors.forEach(function (el) { el.classList.add("built"); });
+    if (caption) caption.classList.add("built");
+    if (scaffold) scaffold.style.strokeDashoffset = "0";
+  } else {
+    var ticking = false;
+    var updateBuilding = function () {
+      ticking = false;
+      var rect = buildingWrap.getBoundingClientRect();
+      var scrollable = rect.height - window.innerHeight;
+      var progress = scrollable > 0 ? (-rect.top) / scrollable : (rect.top <= 0 ? 1 : 0);
+      progress = Math.max(0, Math.min(1, progress));
+
+      var toBuild = Math.round(progress * floors.length);
+      floors.forEach(function (el, i) {
+        el.classList.toggle("built", i < toBuild);
+      });
+      if (scaffold) scaffold.style.strokeDashoffset = String(scaffoldLen * (1 - progress));
+      if (caption) caption.classList.toggle("built", toBuild >= floors.length);
+    };
+    var onScroll = function () {
+      if (!ticking) {
+        window.requestAnimationFrame(updateBuilding);
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    updateBuilding();
+  }
+</script>
+</body>
+</html>
