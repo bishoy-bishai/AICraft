@@ -5,9 +5,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // If deploying to a GitHub Pages *project* site (username.github.io/repo-name),
-  // set base to "/repo-name/". Leave as "/" for a user/org site (username.github.io).
-  base: '/',
+  // Project page: bishoy-bishai.github.io/AICraft
+  base: '/AICraft/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
