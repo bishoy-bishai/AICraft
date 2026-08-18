@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,26 @@ import { cn } from "@/lib/utils";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
+
+interface Stage {
+  num: string;
+  name: string;
+  sub: string;
+  clipId: string;
+  detail: string;
+}
+
+const STAGES: Stage[] = [
+  { num: "01", name: "Learn", sub: "Codebase & style", clipId: "mac-clip-learn", detail: "Inspect 3–5 representative modules. Build style profile." },
+  { num: "02", name: "Understand", sub: "Requirements & architecture", clipId: "mac-clip-understand", detail: "Read Constitution, ADRs, and domain boundaries." },
+  { num: "03", name: "Impact", sub: "What changes", clipId: "mac-clip-impact", detail: "Map boundaries: API, domain, persistence, tests." },
+  { num: "04", name: "Decide", sub: "Simplest design", clipId: "mac-clip-decide", detail: "Decide before coding: capabilities are not entities." },
+  { num: "05", name: "Plan", sub: "Small tasks", clipId: "mac-clip-plan", detail: "Create bounded atomic tasks with acceptance criteria." },
+  { num: "06", name: "Implement", sub: "Match style", clipId: "mac-clip-implement", detail: "Smallest correct change. No unsolicited refactoring." },
+  { num: "07", name: "Verify", sub: "Tests / E2E", clipId: "mac-clip-verify", detail: "Evidentiary proof: compiler, linter, test runner." },
+  { num: "08", name: "Review", sub: "Engineering, not preference", clipId: "mac-clip-review", detail: "8-stage priority order: Architecture down to Docs." },
+  { num: "09", name: "Simplify", sub: "Remove noise", clipId: "mac-clip-simplify", detail: "Eliminate unused abstractions and speculative code." },
+];
 
 const INJECTED_STYLES = `
   .gsap-reveal { visibility: hidden; }
@@ -26,11 +46,7 @@ const INJECTED_STYLES = `
       -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
   }
 
-  /* -------------------------------------------------------------------
-     PHYSICAL SKEUOMORPHIC MATERIALS (Restored 3D Depth)
-  ---------------------------------------------------------------------- */
-  
-  /* OUTSIDE THE CARD: Theme-aware text (Shadow in Light Mode, Glow in Dark Mode) */
+  /* Physical Skeuomorphic Materials */
   .text-3d-matte {
       color: var(--color-foreground);
       text-shadow: 
@@ -49,7 +65,6 @@ const INJECTED_STYLES = `
           drop-shadow(0px 2px 4px color-mix(in srgb, var(--color-foreground) 10%, transparent));
   }
 
-  /* INSIDE THE CARD: Hardcoded Silver/White for the dark background, deep rich shadows */
   .text-card-silver-matte {
       background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
       -webkit-background-clip: text;
@@ -61,7 +76,6 @@ const INJECTED_STYLES = `
           drop-shadow(0px 4px 8px rgba(0,0,0,0.6));
   }
 
-  /* Deep Physical Card with Dynamic Mouse Lighting */
   .premium-depth-card {
       background: linear-gradient(145deg, #0f2b20 0%, #06120e 100%);
       box-shadow: 
@@ -79,7 +93,6 @@ const INJECTED_STYLES = `
       mix-blend-mode: screen; transition: opacity 0.3s ease;
   }
 
-  /* Realistic Mac Hardware */
   .mac-bezel {
       background: linear-gradient(180deg, #23272d 0%, #15181d 100%);
       box-shadow: 
@@ -121,7 +134,6 @@ const INJECTED_STYLES = `
           inset 0 -1px 1px rgba(0,0,0,0.5);
   }
 
-  /* Physical Tactile Buttons */
   .btn-modern-light, .btn-modern-dark {
       transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
@@ -180,10 +192,10 @@ export function CinematicHero({
   brandName = "AICRAFT",
   tagline1 = "Understand first.",
   tagline2 = "Build second.",
-  cardHeading = "The Execution Loop, Redefined.",
+  cardHeading = "Interactive Execution Loop",
   cardDescription = (
     <>
-      <span className="text-white font-semibold">AICraft</span> forces every AI agent through a rigorous 7-phase execution loop with mandatory pre-flight checks, layer separation, zero speculative code, and evidentiary verification.
+      <span className="text-white font-semibold">Hover each stage</span> to inspect the state machine and real-time execution transformation. No stage is optional.
     </>
   ),
   metricValue = 100,
@@ -198,9 +210,55 @@ export function CinematicHero({
   const mainCardRef = useRef<HTMLDivElement>(null);
   const mockupRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>(0);
+  const brickTlRef = useRef<gsap.core.Timeline | null>(null);
+
+  const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
+  const activeStage = STAGES[activeStageIdx];
+
+  // Brick Animation Loop for the Active Stage
+  const createBrickLoop = (index: number) => {
+    const stage = STAGES[index];
+    const selector = `#${stage.clipId} .brick`;
+
+    if (brickTlRef.current) brickTlRef.current.kill();
+
+    gsap.set(selector, { scale: 0, transformOrigin: "50% 100%" });
+
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.8 });
+    tl.to(selector, {
+      scale: 1,
+      duration: 0.7,
+      stagger: { amount: 0.35, from: "start" },
+      ease: "back.out(1.6)",
+    })
+      .to(selector, {
+        y: -4,
+        duration: 1.2,
+        yoyo: true,
+        repeat: 1,
+        ease: "sine.inOut",
+        stagger: { amount: 0.2, from: "center" },
+      })
+      .to(selector, {
+        scale: 0,
+        duration: 0.5,
+        stagger: { amount: 0.25, from: "end" },
+        ease: "expo.in",
+      });
+
+    brickTlRef.current = tl;
+  };
+
+  const handleStageHover = (index: number) => {
+    if (index === activeStageIdx) return;
+    setActiveStageIdx(index);
+    createBrickLoop(index);
+  };
 
   // 1. High-Performance Mouse Interaction Logic (Using requestAnimationFrame)
   useEffect(() => {
+    createBrickLoop(0);
+
     const handleMouseMove = (e: MouseEvent) => {
       if (window.scrollY > window.innerHeight * 2) return;
 
@@ -232,6 +290,7 @@ export function CinematicHero({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(requestRef.current);
+      if (brickTlRef.current) brickTlRef.current.kill();
     };
   }, []);
 
@@ -348,27 +407,36 @@ export function CinematicHero({
           {/* DYNAMIC RESPONSIVE GRID */}
           <div className="relative w-full h-full max-w-7xl mx-auto px-4 lg:px-10 flex flex-col justify-evenly lg:grid lg:grid-cols-12 items-center lg:gap-6 z-10 py-6 lg:py-0">
             
-            {/* 1. LEFT COLUMN: HEADING & CORE VALUE */}
+            {/* 1. LEFT COLUMN: HEADING & ACTIVE STAGE SUMMARY */}
             <div className="card-left-text gsap-reveal order-3 lg:order-1 lg:col-span-3 flex flex-col justify-center text-center lg:text-left z-20 w-full px-2 lg:px-0">
               <span className="font-mono text-xs text-emerald-400 font-bold uppercase tracking-wider mb-2">
-                Mandatory Workflow
+                9-Stage State Machine
               </span>
-              <h3 className="text-white text-2xl md:text-3xl lg:text-3.5xl font-bold mb-3 tracking-tight">
+              <h3 className="text-white text-2xl md:text-3xl lg:text-3.5xl font-bold mb-2 tracking-tight">
                 {cardHeading}
               </h3>
-              <p className="hidden md:block text-emerald-100/70 text-xs md:text-sm font-normal leading-relaxed">
+              <p className="text-emerald-100/70 text-xs md:text-sm font-normal leading-relaxed mb-4">
                 {cardDescription}
               </p>
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-left">
+                <div className="flex items-center justify-between text-[11px] font-mono text-emerald-400 font-bold">
+                  <span>STAGE {activeStage.num}</span>
+                  <span className="text-white uppercase">{activeStage.name}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-zinc-300 font-sans">
+                  {activeStage.detail}
+                </p>
+              </div>
             </div>
 
-            {/* 2. CENTER: REALISTIC MACBOOK SCREEN MOCKUP */}
-            <div className="mockup-scroll-wrapper order-2 lg:order-2 lg:col-span-6 relative w-full h-[320px] sm:h-[380px] md:h-[430px] flex items-center justify-center z-10" style={{ perspective: "1200px" }}>
-              <div className="relative w-full h-full flex items-center justify-center transform scale-[0.72] sm:scale-85 md:scale-95 lg:scale-100">
+            {/* 2. CENTER: MACBOOK SCREEN WITH EMBEDDED 9-STAGE INSPECTOR */}
+            <div className="mockup-scroll-wrapper order-2 lg:order-2 lg:col-span-6 relative w-full h-[340px] sm:h-[400px] md:h-[450px] flex items-center justify-center z-10" style={{ perspective: "1200px" }}>
+              <div className="relative w-full h-full flex items-center justify-center transform scale-[0.70] sm:scale-85 md:scale-95 lg:scale-100">
                 
-                {/* MacBook Enclosure */}
+                {/* MacBook Hardware Enclosure */}
                 <div
                   ref={mockupRef}
-                  className="relative w-[500px] sm:w-[580px] md:w-[620px] h-[320px] sm:h-[360px] md:h-[390px] rounded-[18px] mac-bezel flex flex-col will-change-transform transform-style-3d border border-white/20"
+                  className="relative w-[520px] sm:w-[600px] md:w-[640px] h-[330px] sm:h-[370px] md:h-[410px] rounded-[18px] mac-bezel flex flex-col will-change-transform transform-style-3d border border-white/20"
                 >
                   {/* Top Camera Notch */}
                   <div className="absolute top-[3px] left-1/2 -translate-x-1/2 w-[60px] h-[14px] bg-[#0d1117] rounded-b-lg z-50 flex items-center justify-center">
@@ -388,97 +456,137 @@ export function CinematicHero({
                         <div className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e] border border-[#dea123]" />
                         <div className="h-2.5 w-2.5 rounded-full bg-[#27c93f] border border-[#1aab29]" />
                         <span className="ml-2 text-[10px] text-zinc-400 font-sans font-medium">
-                          AICraft IDE — [Phase 05: Validate]
+                          AICraft Inspector — [{activeStage.num} {activeStage.name.toUpperCase()}]
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-[9px] text-zinc-500">
-                        <span className="rounded bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 font-bold">15 CONSTITUTION RULES</span>
+                        <span className="rounded bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 font-bold">STATE MACHINE LIVE</span>
                         <span>main ⚡</span>
                       </div>
                     </div>
 
                     {/* Mac IDE Workspace Layout */}
                     <div className="grid grid-cols-12 flex-1 overflow-hidden text-[10px]">
-                      {/* Sidebar (4 cols) */}
-                      <div className="col-span-4 border-r border-white/10 bg-[#070b10] p-2.5 space-y-2.5">
-                        <div className="mac-widget">
-                          <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">
-                            Pillars
-                          </span>
-                          <div className="space-y-1 text-zinc-400 text-[9.5px]">
-                            <div className="flex items-center gap-1 text-emerald-400 font-semibold">
-                              <span>✓</span> <span>01_constitution.md</span>
+                      
+                      {/* Left: 9 Stages Nav (5 cols) */}
+                      <div className="col-span-5 border-r border-white/10 bg-[#070b10] p-2 overflow-y-auto space-y-0.5">
+                        <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block px-1.5 py-0.5">
+                          Stages (Hover to Switch)
+                        </span>
+                        {STAGES.map((s, idx) => {
+                          const isSelected = activeStageIdx === idx;
+                          return (
+                            <div
+                              key={s.num}
+                              onMouseEnter={() => handleStageHover(idx)}
+                              className={cn(
+                                "flex items-center justify-between px-2 py-1 rounded-md cursor-pointer transition text-[9.5px]",
+                                isSelected
+                                  ? "bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30"
+                                  : "text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+                              )}
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <span className={isSelected ? "text-emerald-400 font-bold" : "text-zinc-600"}>
+                                  {s.num}
+                                </span>
+                                <span className="truncate">{s.name}</span>
+                              </div>
+                              <span className="text-[8px] font-mono opacity-70 truncate max-w-[65px]">
+                                {s.sub}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-1 text-emerald-400 font-semibold">
-                              <span>✓</span> <span>02_workflow.md</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-zinc-400">
-                              <span>›</span> <span>03_playbook.md</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-zinc-400">
-                              <span>›</span> <span>04_prompt_library.md</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mac-widget pt-2 border-t border-white/10">
-                          <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">
-                            Pre-Flight Gate
-                          </span>
-                          <div className="space-y-0.5 text-[8.5px] text-emerald-400">
-                            <div>✓ Problem Understood</div>
-                            <div>✓ Architecture ADR Match</div>
-                            <div>✓ Domain Invariants Safe</div>
-                            <div>✓ Task Bounded</div>
-                          </div>
-                        </div>
+                          );
+                        })}
                       </div>
 
-                      {/* Main Editor & Evidence Terminal (8 cols) */}
-                      <div className="col-span-8 p-3 flex flex-col justify-between bg-[#080d12]">
+                      {/* Right: SVG Animated Brick Loop + Live State Machine (7 cols) */}
+                      <div className="col-span-7 p-3 flex flex-col justify-between bg-[#080d12] relative overflow-hidden">
+                        
+                        {/* SVG ClipPath Defs for all 9 stages */}
+                        <svg className="absolute w-0 h-0" aria-hidden="true">
+                          <defs>
+                            {STAGES.map((stage, i) => {
+                              const cols = 4 + (i % 3);
+                              const w = 240 / cols;
+                              const h = 180 / (7 - (i % 2));
+                              const rows = Math.ceil(180 / h);
+                              const bricks: { row: number; col: number }[] = [];
+                              for (let row = 0; row < rows; row++) {
+                                const offset = row % 2 === 0 ? 0 : w / 2;
+                                for (let col = -1; col < cols + 1; col++) {
+                                  const x = col * w + offset;
+                                  if (x < -w || x > 240) continue;
+                                  if ((row + col + i * 2) % 5 === 0) continue;
+                                  bricks.push({ row, col });
+                                }
+                              }
+                              return (
+                                <clipPath id={stage.clipId} key={stage.clipId}>
+                                  {bricks.map(({ row, col }) => {
+                                    const offset = row % 2 === 0 ? 0 : w / 2;
+                                    return (
+                                      <rect
+                                        key={`${row}-${col}`}
+                                        className="brick"
+                                        x={col * w + offset}
+                                        y={row * h}
+                                        width={Math.max(w - 4, 6)}
+                                        height={Math.max(h - 4, 6)}
+                                        rx="2"
+                                      />
+                                    );
+                                  })}
+                                </clipPath>
+                              );
+                            })}
+                            <linearGradient id="mac-loop-fill" x1="0" y1="0" x2="1" y2="1">
+                              <stop offset="0%" stopColor="#10b981" />
+                              <stop offset="100%" stopColor="#064e3b" stopOpacity="0.8" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-[9px] text-zinc-400 pb-1 border-b border-white/5">
-                            <span>src/domain/order.service.ts</span>
-                            <span className="text-emerald-400">Atomic Diff (+8 -0)</span>
+                            <span className="text-emerald-400 font-bold">● Active Stage: {activeStage.num} {activeStage.name}</span>
+                            <span className="text-zinc-500 font-mono">{activeStage.sub}</span>
                           </div>
 
-                          <div className="rounded-lg bg-black/60 border border-white/10 p-2.5 text-zinc-300 font-mono text-[9.5px] leading-relaxed space-y-1">
-                            <div className="text-zinc-500">// Rule 06: Reuse primitives | Rule 07: Atomic change</div>
-                            <div>
-                              <span className="text-purple-400">export class</span> <span className="text-yellow-300">OrderApplicationService</span> &#123;
+                          {/* Animated Brick Transformation Display */}
+                          <div className="relative w-full h-[120px] rounded-lg bg-[#05080c] border border-emerald-500/20 flex items-center justify-center overflow-hidden">
+                            <div className="absolute inset-0 bg-emerald-500/5 blur-xl pointer-events-none" />
+                            <svg viewBox="0 0 240 180" className="w-[180px] h-[110px] z-10">
+                              <g clipPath={`url(#${activeStage.clipId})`}>
+                                <rect x="0" y="0" width="240" height="180" fill="url(#mac-loop-fill)" />
+                              </g>
+                              <rect x="2" y="2" width="236" height="176" rx="4" fill="none" stroke="rgba(16,185,129,0.3)" strokeWidth="1" />
+                            </svg>
+                            <div className="absolute bottom-1 text-[8.5px] font-mono text-emerald-300/80">
+                              {activeStage.num} · {activeStage.name.toUpperCase()} STATE
                             </div>
-                            <div className="pl-3 text-zinc-300">
-                              <span className="text-purple-400">async</span> cancel(id: <span className="text-blue-300">OrderId</span>, reason: <span className="text-blue-300">string</span>) &#123;
-                            </div>
-                            <div className="pl-6 text-emerald-300">
-                              const order = await this.orderRepo.findById(id);
-                            </div>
-                            <div className="pl-6 text-emerald-400">
-                              order.assertCanBeCancelled(); <span className="text-zinc-500">// Invariant protected</span>
-                            </div>
-                            <div className="pl-3 text-zinc-300">&#125;</div>
-                            <div>&#125;</div>
                           </div>
 
-                          <div className="mac-widget rounded-md bg-[#0f1720] border border-emerald-500/30 p-1.5 flex items-center justify-between text-[9px]">
+                          {/* Live Heuristic Box */}
+                          <div className="mac-widget rounded-md bg-[#0d141d] border border-emerald-500/30 p-1.5 flex items-center justify-between text-[8.5px]">
                             <div className="flex items-center gap-1.5">
                               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                              <span className="text-emerald-300 font-bold">$ npm run test:boundaries</span>
+                              <span className="text-zinc-300 font-sans">{activeStage.detail}</span>
                             </div>
-                            <span className="text-emerald-400 font-bold">14 passed [100% EVIDENTIARY]</span>
+                            <span className="text-emerald-400 font-bold">[READY]</span>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between border-t border-white/10 pt-1.5 text-[8.5px] text-zinc-500">
-                          <span>AICraft Standard Active</span>
-                          <span>Zero Hallucination Proof</span>
+                        <div className="flex items-center justify-between border-t border-white/10 pt-1.5 text-[8px] text-zinc-500">
+                          <span>AICraft Loop State Machine</span>
+                          <span>↻ back to LEARN on next change</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* MacBook Bottom Chassis Lip & Hinge Indent */}
-                  <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-[540px] sm:w-[620px] md:w-[660px] h-[10px] mac-chin rounded-b-xl border-t border-white/15 flex items-center justify-center">
+                  <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-[560px] sm:w-[640px] md:w-[680px] h-[10px] mac-chin rounded-b-xl border-t border-white/15 flex items-center justify-center">
                     <div className="w-[80px] h-[3px] bg-black/70 rounded-full" />
                   </div>
                 </div>

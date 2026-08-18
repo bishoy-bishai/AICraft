@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Reveal } from "@/components/reveal";
 import { CopyBlock } from "@/components/copy-block";
-import { LoopStackInteractor } from "@/components/ui/loop-stack-interactor";
 import { ConstitutionViewer } from "@/components/ui/constitution-viewer";
 import { WorkflowStepper } from "@/components/ui/workflow-stepper";
 import { PlaybookExplorer } from "@/components/ui/playbook-explorer";
@@ -443,17 +442,17 @@ function App() {
         </div>
       </section>
 
-      {/* Cinematic Interactive Execution Loop Section */}
+      {/* Cinematic Interactive Execution Loop Section (Mac Screen with embedded 9-Stage Inspector) */}
       <section id="execution-loop" className="border-b border-border/70 bg-black relative">
         <div className="w-full">
           <CinematicHero
             brandName="AICRAFT"
             tagline1="Understand first."
             tagline2="Build second."
-            cardHeading="The Execution Loop, Redefined."
+            cardHeading="Interactive Execution Loop"
             cardDescription={
               <>
-                <span className="text-white font-semibold">AICraft</span> forces every AI agent through a rigorous 7-phase execution loop with mandatory pre-flight checks, layer separation, zero speculative code, and evidentiary verification.
+                <span className="text-white font-semibold">Hover each stage</span> on the Mac screen to inspect the state machine and transformation in real-time.
               </>
             }
             metricValue={100}
@@ -461,19 +460,6 @@ function App() {
             ctaHeading="Adopt Senior AI Discipline."
             ctaDescription="Install the AICraft skill into Antigravity, Claude Code, Cursor, Windsurf, or Codex in under 60 seconds."
           />
-        </div>
-
-        {/* Hover-driven Loop Stage Navigator */}
-        <div className="mx-auto max-w-[1100px] px-6 py-20 border-t border-white/10">
-          <Reveal as="h3" className="mb-2 text-xl font-bold tracking-tight text-foreground">
-            Interactive Stage-by-Stage Inspector
-          </Reveal>
-          <Reveal as="p" className="mb-8 text-xs text-muted-foreground">
-            Hover over each loop stage below to see the state machine and transformation in real-time:
-          </Reveal>
-          <Reveal>
-            <LoopStackInteractor />
-          </Reveal>
         </div>
       </section>
 
