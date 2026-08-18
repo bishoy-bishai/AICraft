@@ -78,6 +78,7 @@ graph LR
 - Keep responsibilities in their owning layers.
 - Avoid speculative features, premature abstractions, or unrelated refactoring.
 - Keep changes atomic and bisectable.
+- Apply `skills/security.md` rules while writing code — security is built in during implementation, not only checked in Phase 6 review.
 
 **Exit Criteria:** Requested functionality is completely implemented without collateral scope creep.
 
