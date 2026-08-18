@@ -11,6 +11,7 @@ import { AgentConfigGenerator } from "@/components/ui/agent-config-generator";
 import { DisciplineScorecard } from "@/components/ui/discipline-scorecard";
 import { MultiAgentInstallHub } from "@/components/ui/multi-agent-install-hub";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -108,6 +109,9 @@ function App() {
             <a href="#workflow" className="text-muted-foreground transition hover:text-foreground">
               Workflow
             </a>
+            <a href="#execution-loop" className="text-muted-foreground transition hover:text-foreground">
+              Execution Loop
+            </a>
             <a href="#playbook" className="text-muted-foreground transition hover:text-foreground">
               Playbook
             </a>
@@ -119,9 +123,6 @@ function App() {
             </a>
             <a href="#generator" className="text-muted-foreground transition hover:text-foreground">
               Config Generator
-            </a>
-            <a href="#scorecard" className="text-muted-foreground transition hover:text-foreground">
-              Audit Score
             </a>
           </div>
 
@@ -439,19 +440,40 @@ function App() {
           <Reveal>
             <WorkflowStepper />
           </Reveal>
+        </div>
+      </section>
 
-          {/* Visual GSAP Loop Component */}
-          <div className="mt-16 border-t border-border/70 pt-16">
-            <Reveal as="h3" className="mb-2 text-xl font-bold tracking-tight">
-              Interactive Execution Loop
-            </Reveal>
-            <Reveal as="p" className="mb-8 text-xs text-muted-foreground">
-              Hover over each stage to inspect the engineering transformation and feedback loops:
-            </Reveal>
-            <Reveal>
-              <LoopStackInteractor />
-            </Reveal>
-          </div>
+      {/* Cinematic Interactive Execution Loop Section */}
+      <section id="execution-loop" className="border-b border-border/70 bg-black relative">
+        <div className="w-full">
+          <CinematicHero
+            brandName="AICRAFT"
+            tagline1="Understand first."
+            tagline2="Build second."
+            cardHeading="The Execution Loop, Redefined."
+            cardDescription={
+              <>
+                <span className="text-white font-semibold">AICraft</span> forces every AI agent through a rigorous 7-phase execution loop with mandatory pre-flight checks, layer separation, zero speculative code, and evidentiary verification.
+              </>
+            }
+            metricValue={100}
+            metricLabel="% Evidence Verified"
+            ctaHeading="Adopt Senior AI Discipline."
+            ctaDescription="Install the AICraft skill into Antigravity, Claude Code, Cursor, Windsurf, or Codex in under 60 seconds."
+          />
+        </div>
+
+        {/* Hover-driven Loop Stage Navigator */}
+        <div className="mx-auto max-w-[1100px] px-6 py-20 border-t border-white/10">
+          <Reveal as="h3" className="mb-2 text-xl font-bold tracking-tight text-foreground">
+            Interactive Stage-by-Stage Inspector
+          </Reveal>
+          <Reveal as="p" className="mb-8 text-xs text-muted-foreground">
+            Hover over each loop stage below to see the state machine and transformation in real-time:
+          </Reveal>
+          <Reveal>
+            <LoopStackInteractor />
+          </Reveal>
         </div>
       </section>
 
@@ -631,6 +653,7 @@ function App() {
           <div className="flex flex-wrap items-center justify-center gap-6 font-mono text-xs">
             <a href="#constitution" className="hover:text-foreground">Constitution</a>
             <a href="#workflow" className="hover:text-foreground">Workflow</a>
+            <a href="#execution-loop" className="hover:text-foreground">Execution Loop</a>
             <a href="#playbook" className="hover:text-foreground">Playbook</a>
             <a href="#prompt-library" className="hover:text-foreground">Prompt Library</a>
             <a href="#comparison" className="hover:text-foreground">Discipline vs Chaos</a>
