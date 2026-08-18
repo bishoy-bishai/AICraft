@@ -11,20 +11,84 @@ interface Stage {
   num: string;
   name: string;
   sub: string;
-  clipId: string;
   detail: string;
+  rule: string;
+  code: string;
 }
 
 const STAGES: Stage[] = [
-  { num: "01", name: "Learn", sub: "Codebase & style", clipId: "mac-clip-learn", detail: "Inspect 3–5 representative modules. Build style profile." },
-  { num: "02", name: "Understand", sub: "Requirements & architecture", clipId: "mac-clip-understand", detail: "Read Constitution, ADRs, and domain boundaries." },
-  { num: "03", name: "Impact", sub: "What changes", clipId: "mac-clip-impact", detail: "Map boundaries: API, domain, persistence, tests." },
-  { num: "04", name: "Decide", sub: "Simplest design", clipId: "mac-clip-decide", detail: "Decide before coding: capabilities are not entities." },
-  { num: "05", name: "Plan", sub: "Small tasks", clipId: "mac-clip-plan", detail: "Create bounded atomic tasks with acceptance criteria." },
-  { num: "06", name: "Implement", sub: "Match style", clipId: "mac-clip-implement", detail: "Smallest correct change. No unsolicited refactoring." },
-  { num: "07", name: "Verify", sub: "Tests / E2E", clipId: "mac-clip-verify", detail: "Evidentiary proof: compiler, linter, test runner." },
-  { num: "08", name: "Review", sub: "Engineering, not preference", clipId: "mac-clip-review", detail: "8-stage priority order: Architecture down to Docs." },
-  { num: "09", name: "Simplify", sub: "Remove noise", clipId: "mac-clip-simplify", detail: "Eliminate unused abstractions and speculative code." },
+  {
+    num: "01",
+    name: "Learn",
+    sub: "Codebase & style",
+    detail: "Inspect 3–5 representative modules. Build style profile.",
+    rule: "Rule 01: Read before you write",
+    code: "$ aicraft learn --sample=5\n✓ Patterns: Clean Architecture / DDD\n✓ Conventions: Strict TS, result types",
+  },
+  {
+    num: "02",
+    name: "Understand",
+    sub: "Requirements & architecture",
+    detail: "Read Constitution, ADRs, and domain boundaries.",
+    rule: "Rule 04: Respect the architecture",
+    code: "// Invariants: Domain cannot depend on Infra\nassertDomainBoundary(Module.Core);\n✓ Pre-flight checks passed",
+  },
+  {
+    num: "03",
+    name: "Impact",
+    sub: "What changes",
+    detail: "Map boundaries: API, domain, persistence, tests.",
+    rule: "Rule 11: Never break the domain",
+    code: "Impact Radius:\n  [Touched]: OrderApplicationService\n  [Protected]: Order.AggregateRoot\n  [Tests]: 14 suites affected",
+  },
+  {
+    num: "04",
+    name: "Decide",
+    sub: "Simplest design",
+    detail: "Decide before coding: capabilities are not entities.",
+    rule: "Rule 06: Reuse before creating",
+    code: "ADR Decision:\n  Use existing IdempotencyKey middleware\n  Do not invent custom token schema",
+  },
+  {
+    num: "05",
+    name: "Plan",
+    sub: "Small tasks",
+    detail: "Create bounded atomic tasks with acceptance criteria.",
+    rule: "Rule 03: Tasks drive development",
+    code: "Task 1: Add assertCanBeCancelled() [EST: 15m]\nTask 2: Emit OrderCancelledEvent   [EST: 10m]\nTask 3: Unit & boundary test suite  [EST: 20m]",
+  },
+  {
+    num: "06",
+    name: "Implement",
+    sub: "Match style",
+    detail: "Smallest correct change. No unsolicited refactoring.",
+    rule: "Rule 07: Keep changes atomic",
+    code: "export class OrderApplicationService {\n  async cancel(id: OrderId) {\n    const order = await this.repo.find(id);\n    order.assertCanBeCancelled();\n  }\n}",
+  },
+  {
+    num: "07",
+    name: "Verify",
+    sub: "Tests / E2E",
+    detail: "Evidentiary proof: compiler, linter, test runner.",
+    rule: "Zero-Hallucination Invariant",
+    code: "$ npm test -- --coverage\n✓ 14 test suites passed (100% evidentiary)\n✓ 0 compiler errors | 0 lint warnings",
+  },
+  {
+    num: "08",
+    name: "Review",
+    sub: "Engineering, not preference",
+    detail: "8-stage priority order: Architecture down to Docs.",
+    rule: "Rule 10: Explain decisions",
+    code: "Review Gate: Architecture → Domain → Logic\n✓ Security: Sanitized inputs\n✓ Domain: Invariants strictly preserved",
+  },
+  {
+    num: "09",
+    name: "Simplify",
+    sub: "Remove noise",
+    detail: "Eliminate unused abstractions and speculative code.",
+    rule: "Rule 09: Think long term",
+    code: "Simplification pass:\n- Removed 2 speculative helper classes\n- Preserved only bounded changes",
+  },
 ];
 
 const INJECTED_STYLES = `
@@ -195,7 +259,7 @@ export function CinematicHero({
   cardHeading = "Interactive Execution Loop",
   cardDescription = (
     <>
-      <span className="text-white font-semibold">Hover each stage</span> to inspect the state machine and real-time execution transformation. No stage is optional.
+      <span className="text-white font-semibold">Hover each stage</span> on the Mac screen to inspect the state machine and transformation in real-time.
     </>
   ),
   metricValue = 100,
@@ -210,55 +274,17 @@ export function CinematicHero({
   const mainCardRef = useRef<HTMLDivElement>(null);
   const mockupRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>(0);
-  const brickTlRef = useRef<gsap.core.Timeline | null>(null);
 
   const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
   const activeStage = STAGES[activeStageIdx];
 
-  // Brick Animation Loop for the Active Stage
-  const createBrickLoop = (index: number) => {
-    const stage = STAGES[index];
-    const selector = `#${stage.clipId} .brick`;
-
-    if (brickTlRef.current) brickTlRef.current.kill();
-
-    gsap.set(selector, { scale: 0, transformOrigin: "50% 100%" });
-
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.8 });
-    tl.to(selector, {
-      scale: 1,
-      duration: 0.7,
-      stagger: { amount: 0.35, from: "start" },
-      ease: "back.out(1.6)",
-    })
-      .to(selector, {
-        y: -4,
-        duration: 1.2,
-        yoyo: true,
-        repeat: 1,
-        ease: "sine.inOut",
-        stagger: { amount: 0.2, from: "center" },
-      })
-      .to(selector, {
-        scale: 0,
-        duration: 0.5,
-        stagger: { amount: 0.25, from: "end" },
-        ease: "expo.in",
-      });
-
-    brickTlRef.current = tl;
-  };
-
   const handleStageHover = (index: number) => {
     if (index === activeStageIdx) return;
     setActiveStageIdx(index);
-    createBrickLoop(index);
   };
 
   // 1. High-Performance Mouse Interaction Logic (Using requestAnimationFrame)
   useEffect(() => {
-    createBrickLoop(0);
-
     const handleMouseMove = (e: MouseEvent) => {
       if (window.scrollY > window.innerHeight * 2) return;
 
@@ -290,7 +316,6 @@ export function CinematicHero({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(requestRef.current);
-      if (brickTlRef.current) brickTlRef.current.kill();
     };
   }, []);
 
@@ -500,80 +525,36 @@ export function CinematicHero({
                         })}
                       </div>
 
-                      {/* Right: SVG Animated Brick Loop + Live State Machine (7 cols) */}
+                      {/* Right: Stage Code Execution & Verification Console (7 cols) */}
                       <div className="col-span-7 p-3 flex flex-col justify-between bg-[#080d12] relative overflow-hidden">
-                        
-                        {/* SVG ClipPath Defs for all 9 stages */}
-                        <svg className="absolute w-0 h-0" aria-hidden="true">
-                          <defs>
-                            {STAGES.map((stage, i) => {
-                              const cols = 4 + (i % 3);
-                              const w = 240 / cols;
-                              const h = 180 / (7 - (i % 2));
-                              const rows = Math.ceil(180 / h);
-                              const bricks: { row: number; col: number }[] = [];
-                              for (let row = 0; row < rows; row++) {
-                                const offset = row % 2 === 0 ? 0 : w / 2;
-                                for (let col = -1; col < cols + 1; col++) {
-                                  const x = col * w + offset;
-                                  if (x < -w || x > 240) continue;
-                                  if ((row + col + i * 2) % 5 === 0) continue;
-                                  bricks.push({ row, col });
-                                }
-                              }
-                              return (
-                                <clipPath id={stage.clipId} key={stage.clipId}>
-                                  {bricks.map(({ row, col }) => {
-                                    const offset = row % 2 === 0 ? 0 : w / 2;
-                                    return (
-                                      <rect
-                                        key={`${row}-${col}`}
-                                        className="brick"
-                                        x={col * w + offset}
-                                        y={row * h}
-                                        width={Math.max(w - 4, 6)}
-                                        height={Math.max(h - 4, 6)}
-                                        rx="2"
-                                      />
-                                    );
-                                  })}
-                                </clipPath>
-                              );
-                            })}
-                            <linearGradient id="mac-loop-fill" x1="0" y1="0" x2="1" y2="1">
-                              <stop offset="0%" stopColor="#10b981" />
-                              <stop offset="100%" stopColor="#064e3b" stopOpacity="0.8" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-[9px] text-zinc-400 pb-1 border-b border-white/5">
-                            <span className="text-emerald-400 font-bold">● Active Stage: {activeStage.num} {activeStage.name}</span>
+                            <span className="text-emerald-400 font-bold">
+                              ● Stage {activeStage.num}: {activeStage.name}
+                            </span>
                             <span className="text-zinc-500 font-mono">{activeStage.sub}</span>
                           </div>
 
-                          {/* Animated Brick Transformation Display */}
-                          <div className="relative w-full h-[120px] rounded-lg bg-[#05080c] border border-emerald-500/20 flex items-center justify-center overflow-hidden">
-                            <div className="absolute inset-0 bg-emerald-500/5 blur-xl pointer-events-none" />
-                            <svg viewBox="0 0 240 180" className="w-[180px] h-[110px] z-10">
-                              <g clipPath={`url(#${activeStage.clipId})`}>
-                                <rect x="0" y="0" width="240" height="180" fill="url(#mac-loop-fill)" />
-                              </g>
-                              <rect x="2" y="2" width="236" height="176" rx="4" fill="none" stroke="rgba(16,185,129,0.3)" strokeWidth="1" />
-                            </svg>
-                            <div className="absolute bottom-1 text-[8.5px] font-mono text-emerald-300/80">
-                              {activeStage.num} · {activeStage.name.toUpperCase()} STATE
-                            </div>
+                          {/* Rule & Constraint Tag */}
+                          <div className="flex items-center gap-1.5 text-[8.5px] text-zinc-400 font-mono">
+                            <span className="text-emerald-400 font-bold">Enforced:</span>
+                            <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 border border-emerald-500/20 text-emerald-300">
+                              {activeStage.rule}
+                            </span>
                           </div>
 
-                          {/* Live Heuristic Box */}
+                          {/* Code & State Console */}
+                          <div className="rounded-lg bg-[#05080c] border border-white/10 p-2.5 font-mono text-[9.5px] leading-relaxed text-zinc-300 whitespace-pre-line overflow-x-auto">
+                            {activeStage.code}
+                          </div>
+
+                          {/* Live Heuristic Status */}
                           <div className="mac-widget rounded-md bg-[#0d141d] border border-emerald-500/30 p-1.5 flex items-center justify-between text-[8.5px]">
                             <div className="flex items-center gap-1.5">
                               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                               <span className="text-zinc-300 font-sans">{activeStage.detail}</span>
                             </div>
-                            <span className="text-emerald-400 font-bold">[READY]</span>
+                            <span className="text-emerald-400 font-bold">[VERIFIED]</span>
                           </div>
                         </div>
 
