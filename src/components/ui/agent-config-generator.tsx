@@ -13,17 +13,10 @@ interface TargetAgent {
 
 const TARGET_AGENTS: TargetAgent[] = [
   {
-    id: "antigravity",
-    name: "Antigravity (AGY)",
-    filename: "SKILL.md",
-    location: ".agents/skills/aicraft/SKILL.md or ~/.gemini/config/skills/aicraft/SKILL.md",
-    desc: "Natively uses YAML frontmatter and progressive disclosure.",
-  },
-  {
     id: "claudecode",
     name: "Claude Code",
     filename: "CLAUDE.md",
-    location: "Root CLAUDE.md or ~/.claude/skills/aicraft/SKILL.md",
+    location: "Project root CLAUDE.md",
     desc: "Standing instructions and /aicraft custom slash command.",
   },
   {
@@ -58,56 +51,13 @@ const STACKS = [
 ];
 
 export function AgentConfigGenerator() {
-  const [selectedAgentId, setSelectedAgentId] = useState<string>("antigravity");
+  const [selectedAgentId, setSelectedAgentId] = useState<string>("claudecode");
   const [selectedStackId, setSelectedStackId] = useState<string>("ts-react");
 
   const agent = TARGET_AGENTS.find((a) => a.id === selectedAgentId) || TARGET_AGENTS[0];
   const stack = STACKS.find((s) => s.id === selectedStackId) || STACKS[0];
 
   const generateConfig = () => {
-    if (selectedAgentId === "antigravity") {
-      return `---
-name: aicraft
-description: "AI engineering discipline for coding agents. Mandates Constitution (15 rules), 7-Phase Workflow, Scenario Playbooks, and zero-hallucination evidentiary verification."
----
-
-# AICraft — AI Engineering Discipline
-
-## Purpose
-Enforces deterministic, senior-level engineering discipline for all changes in this ${stack.name} codebase.
-
-## Mandatory Core Principle
-> **Understand first. Build second.**
-
-## 15 Mandatory Constitution Rules
-1. **Read before you write:** Inspect 3–5 representative modules in ${stack.path} before writing code.
-2. **Documentation is truth:** Architecture docs, ADRs, and schemas override assumptions.
-3. **Tasks drive development:** Work only on bounded tasks with clear acceptance criteria.
-4. **Respect the architecture:** Enforce layer separation (Presentation -> Application -> Domain -> Data -> Infrastructure).
-5. **Protect existing decisions:** Never modify architectural patterns without an approved ADR.
-6. **Reuse before creating:** Search existing codebase primitives before introducing new abstractions.
-7. **Keep changes atomic:** Ship the smallest correct change. No unrelated refactoring.
-8. **Update documentation:** Sync README, API specs, and schemas whenever behavior changes.
-9. **Think long term:** Write self-explanatory code; avoid speculative complexity.
-10. **Explain decisions:** Ground structural choices in evidence and file citations.
-11. **Never break the Domain:** Business rules and data invariants are inviolable.
-12. **Ask when unsure:** Stop and request clarification when requirements conflict or are ambiguous.
-13. **Respect time:** Deliver clean diffs, verified facts, and zero fluff.
-14. **Leave project better:** Improve tests and clarity without bloat.
-15. **Protect the vision:** Align with repository architecture.
-
-## Pre-Implementation Checklist
-Before writing code, answer:
-- Do I understand the problem?
-- Do I understand the architecture?
-- Do I understand the domain?
-- Do I understand the task?
-If any answer is "No", DO NOT write code. Stop and ask.
-
-## Evidentiary Verification Rule
-NEVER claim tests passed or functionality works without executing tests and providing real command output.`;
-    }
-
     if (selectedAgentId === "cursor") {
       return `# Cursor AI Rules — AICraft Engineering Discipline
 # Stack: ${stack.name}
@@ -155,8 +105,8 @@ Understand first. Build second. Match the codebase. Ship the smallest correct ch
 - If requirements conflict with architecture or domain rules, STOP and ask.`;
     }
 
-    // Default AGENTS.md / Windsurf
-    return `# AGENTS.md — AICraft AI Engineering Discipline
+    // Default: AGENTS.md (Codex) / .windsurfrules (Windsurf)
+    return `# ${agent.filename} — AICraft AI Engineering Discipline
 # Applicable Agents: OpenAI Codex, Windsurf Cascade, Copilot, ChatGPT
 # Tech Stack: ${stack.name}
 
@@ -204,6 +154,10 @@ If any answer is "No", stop and request clarification.
     <div className="space-y-8">
       {/* Target Agent Selector */}
       <div className="space-y-3">
+        <p className="text-xs text-muted-foreground">
+          Looking for <strong>Google Antigravity</strong>? It needs the full multi-file skill folder, not a single
+          generated file — use the "Google Antigravity (AGY)" tab in the install command section below instead.
+        </p>
         <span className="font-mono text-xs font-semibold text-muted-foreground uppercase">
           1. Select Your AI Tool / Platform:
         </span>
