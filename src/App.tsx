@@ -9,6 +9,7 @@ import { ChaosComparison } from "@/components/ui/chaos-comparison";
 import { AgentConfigGenerator } from "@/components/ui/agent-config-generator";
 import { DisciplineScorecard } from "@/components/ui/discipline-scorecard";
 import { MultiAgentInstallHub } from "@/components/ui/multi-agent-install-hub";
+import { CreatorSection } from "@/components/ui/creator-section";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
 import { 
@@ -24,7 +25,8 @@ import {
   FileCode2,
   Shield,
   Code2,
-  CheckCircle2
+  CheckCircle2,
+  UserCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -122,6 +124,10 @@ function App() {
             </a>
             <a href="#generator" className="text-muted-foreground transition hover:text-foreground">
               Config Generator
+            </a>
+            <a href="#creator" className="text-muted-foreground transition hover:text-foreground flex items-center gap-1">
+              <UserCheck className="h-3 w-3 text-primary" />
+              <span>Creator</span>
             </a>
           </div>
 
@@ -622,6 +628,9 @@ function App() {
         </div>
       </section>
 
+      {/* Meet the Creator Section */}
+      <CreatorSection />
+
       {/* Footer */}
       <footer className="px-6 py-16 text-center text-xs text-muted-foreground">
         <div className="mx-auto max-w-[1000px] space-y-6">
@@ -633,7 +642,7 @@ function App() {
           </div>
 
           <p className="max-w-md mx-auto text-xs text-muted-foreground">
-            An open standard for coding agents that work in real codebases. Understand first. Build second.
+            Created by <a href="https://www.linkedin.com/in/bishoybishai/" target="_blank" rel="noreferrer" className="text-primary hover:underline font-semibold">Bishoy Bishai</a>. An open standard for coding agents that work in real codebases.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-6 font-mono text-xs">
@@ -645,6 +654,7 @@ function App() {
             <a href="#comparison" className="hover:text-foreground">Discipline vs Chaos</a>
             <a href="#generator" className="hover:text-foreground">Config Generator</a>
             <a href="#install" className="hover:text-foreground">Install Hub</a>
+            <a href="#creator" className="hover:text-foreground font-semibold text-primary">Creator</a>
             <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-primary hover:underline">
               GitHub Repository ↗
             </a>
