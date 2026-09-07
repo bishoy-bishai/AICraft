@@ -8,7 +8,7 @@ AICraft is a standalone Agent Skill and Claude Code plugin that enforces discipl
 
 AICraft standardizes how agents execute non-trivial engineering work in existing repositories. It emphasizes architecture respect, bounded scope, and verifiable claims.
 
-Canonical skill entrypoint: [skills/aicraft/SKILL.md](skills/aicraft/SKILL.md)
+Canonical skill entrypoint: [SKILL.md](SKILL.md)
 
 ## Why It Exists
 
@@ -23,10 +23,10 @@ Raw code generation often introduces architecture drift, speculative abstraction
 
 References:
 
-- [skills/aicraft/references/constitution.md](skills/aicraft/references/constitution.md)
-- [skills/aicraft/references/workflow.md](skills/aicraft/references/workflow.md)
-- [skills/aicraft/references/playbook.md](skills/aicraft/references/playbook.md)
-- [skills/aicraft/references/prompt-library.md](skills/aicraft/references/prompt-library.md)
+- [references/constitution.md](references/constitution.md)
+- [references/workflow.md](references/workflow.md)
+- [references/playbook.md](references/playbook.md)
+- [references/prompt-library.md](references/prompt-library.md)
 
 ## The 7-Phase Workflow
 
@@ -75,8 +75,8 @@ npx skills add bishoy-bishai/AICraft --skill aicraft
 
 Manual skill installation:
 
-1. Copy [skills/aicraft](skills/aicraft) into your client skill directory.
-2. Ensure [skills/aicraft/SKILL.md](skills/aicraft/SKILL.md) is the selected skill entrypoint.
+1. Copy this repository's skill artifacts into your client skill directory.
+2. Ensure [SKILL.md](SKILL.md) is the selected skill entrypoint.
 
 ## Example Prompts
 
@@ -90,7 +90,8 @@ Manual skill installation:
 
 - [.claude-plugin](.claude-plugin)
 - [commands](commands)
-- [skills/aicraft](skills/aicraft)
+- [references](references)
+- [templates](templates)
 - [tests](tests)
 - [validation](validation)
 - [.github/workflows/validate.yml](.github/workflows/validate.yml)

@@ -1,6 +1,6 @@
 {
   "name": "aicraft",
-  "description": "AI engineering discipline for coding agents: Constitution, workflow, playbooks, and deterministic prompt engineering.",
+  "description": "AI engineering discipline for coding agents: a Constitution, 7-phase workflow, scenario playbooks, and deterministic prompt library.",
   "owner": {
     "name": "Bishoy Bishai",
     "url": "https://github.com/bishoy-bishai"
@@ -9,7 +9,7 @@
     {
       "name": "aicraft",
       "source": "./",
-      "description": "AI engineering discipline for coding agents: Constitution, workflow, playbooks, and deterministic prompt engineering."
+      "description": "AI engineering discipline for coding agents: a Constitution, 7-phase workflow, scenario playbooks, and deterministic prompt library."
     }
   ]
 }

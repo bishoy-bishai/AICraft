@@ -4,14 +4,15 @@ This repository is a skill-first package. Validation is a release gate.
 
 ## Required Structure
 
-The repository must keep a single canonical skill entrypoint at skills/aicraft/SKILL.md and must not include website or frontend application artifacts.
+The repository must keep a single canonical skill entrypoint at SKILL.md and must not include website or frontend application artifacts.
 
 Required directories/files:
 
 - .claude-plugin/plugin.json
 - .claude-plugin/marketplace.json
-- skills/aicraft/SKILL.md
-- skills/aicraft/references/
+- SKILL.md
+- references/
+- templates/
 - validation/validate.py
 - tests/
 - .github/workflows/validate.yml

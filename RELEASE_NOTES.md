@@ -7,6 +7,7 @@ AICraft is now packaged as a standalone Agent Skill and Claude Code plugin, read
 ### Highlights
 
 - Converted repository to a skill-first distribution model.
+- Established root-level canonical skill entrypoint at SKILL.md.
 - Added Claude Code plugin packaging with .claude-plugin/plugin.json and .claude-plugin/marketplace.json.
 - Preserved and normalized the 4 Pillars:
   - Constitution
@@ -31,7 +32,7 @@ AICraft is now packaged as a standalone Agent Skill and Claude Code plugin, read
 
 - Agent Skills: npx skills add bishoy-bishai/AICraft --skill aicraft
 - Claude plugin: use Claude plugin installation flow with this repository.
-- Manual: place skills/aicraft in your client skills directory and use skills/aicraft/SKILL.md.
+- Manual: place skill artifacts in your client skills directory and use SKILL.md.
 
 ### Notes
 

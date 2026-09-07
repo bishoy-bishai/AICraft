@@ -6,12 +6,16 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CANONICAL_SKILL = ROOT / "skills" / "aicraft" / "SKILL.md"
+CANONICAL_SKILL = ROOT / "SKILL.md"
+REFERENCES_DIR = ROOT / "references"
+TEMPLATES_DIR = ROOT / "templates"
 COMMAND_DOC = ROOT / "commands" / "aicraft.md"
 PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 MARKETPLACE_JSON = ROOT / ".claude-plugin" / "marketplace.json"
 
 FORBIDDEN_PATHS = [
+    "skills",
+    "skills/aicraft",
     "src",
     "public",
     "dist",
@@ -38,6 +42,7 @@ FORBIDDEN_HINTS = [
     "npm run dev",
     "npm install",
     "GitHub Pages",
+    "skills/aicraft/",
 ]
 
 SECRET_PATTERNS = [
@@ -92,13 +97,13 @@ def check_skill(errors):
         return
     fm, body = parse_frontmatter(text)
     if fm is None:
-        fail(errors, "skills/aicraft/SKILL.md missing YAML frontmatter")
+        fail(errors, "SKILL.md missing YAML frontmatter")
         return
     for key in ("name", "description"):
         if key not in fm or not fm[key].strip():
-            fail(errors, f"skills/aicraft/SKILL.md frontmatter missing '{key}'")
+            fail(errors, f"SKILL.md frontmatter missing '{key}'")
     if fm.get("name") != "aicraft":
-        fail(errors, "skills/aicraft/SKILL.md frontmatter name must be 'aicraft'")
+        fail(errors, "SKILL.md frontmatter name must be 'aicraft'")
     required_body_checks = [
         "Understand first. Build second.",
         "Constitution",
@@ -115,7 +120,32 @@ def check_skill(errors):
     ]
     for token in required_body_checks:
         if token not in body:
-            fail(errors, f"skills/aicraft/SKILL.md missing required content token: {token}")
+            fail(errors, f"SKILL.md missing required content token: {token}")
+
+    required_refs = [
+        "ai-behavior.md",
+        "architecture.md",
+        "code-review.md",
+        "codebase-discovery.md",
+        "constitution.md",
+        "database-review.md",
+        "implementation.md",
+        "playbook.md",
+        "prompt-library.md",
+        "security.md",
+        "task-planning.md",
+        "testing.md",
+        "workflow.md",
+    ]
+    if not REFERENCES_DIR.exists():
+        fail(errors, "references directory is missing")
+    else:
+        for name in required_refs:
+            if not (REFERENCES_DIR / name).exists():
+                fail(errors, f"Missing required reference: references/{name}")
+
+    if not TEMPLATES_DIR.exists():
+        fail(errors, "templates directory is missing")
 
 
 def check_plugin(errors):
@@ -142,9 +172,22 @@ def check_plugin(errors):
         fail(errors, ".claude-plugin/plugin.json license must be MIT")
     if plugin.get("repository") != "https://github.com/bishoy-bishai/AICraft":
         fail(errors, ".claude-plugin/plugin.json repository URL mismatch")
+    if plugin.get("license") != "MIT":
+        fail(errors, ".claude-plugin/plugin.json license must be MIT")
+    commands = plugin.get("commands")
+    if not isinstance(commands, list) or not commands:
+        fail(errors, ".claude-plugin/plugin.json commands must be a non-empty list")
+    else:
+        for cmd in commands:
+            if not isinstance(cmd, str):
+                fail(errors, ".claude-plugin/plugin.json commands entries must be strings")
+                continue
+            cmd_path = (ROOT / cmd).resolve() if not cmd.startswith("./") else (ROOT / cmd[2:]).resolve()
+            if not cmd_path.exists():
+                fail(errors, f"Command path does not exist: {cmd}")
 
     if not CANONICAL_SKILL.exists():
-        fail(errors, "Canonical skill file missing at skills/aicraft/SKILL.md")
+        fail(errors, "Canonical skill file missing at SKILL.md")
 
     if not COMMAND_DOC.exists():
         fail(errors, "Command doc missing at commands/aicraft.md")
