@@ -1,172 +1,116 @@
-# AICraft — AI Engineering Discipline for Coding Agents
+# AICraft
 
-[![AI Discipline: AICraft](https://img.shields.io/badge/AI%20Discipline-AICraft-00C781.svg)](https://github.com/bishoy-bishai/AICraft)
-[![Standard: 4 Pillars](https://img.shields.io/badge/Standard-4%20Pillars-blue.svg)](https://github.com/bishoy-bishai/AICraft)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bishoy-bishai/AICraft/blob/main/LICENSE)
+> Understand first. Build second.
 
-> **Understand first. Build second.**
+AICraft is a standalone Agent Skill and Claude Code plugin that enforces disciplined, evidence-based software engineering for coding agents.
 
-**AICraft** is an open engineering standard and operational discipline designed for AI coding agents (**Google Antigravity**, **Anthropic Claude Code**, **Cursor**, **Windsurf**, **OpenAI Codex**, **ChatGPT**, and **Gemini**).
+## What AICraft Is
 
-While modern AI models can easily write syntax, raw generation without engineering discipline produces architectural drift, phantom abstractions, broken domain invariants, and unverified test claims. AICraft turns AI coding agents into disciplined, architecture-respecting senior engineering partners.
+AICraft standardizes how agents execute non-trivial engineering work in existing repositories. It emphasizes architecture respect, bounded scope, and verifiable claims.
 
----
+Canonical skill entrypoint: [skills/aicraft/SKILL.md](skills/aicraft/SKILL.md)
 
-## 🏛️ The 4 Pillars (Reading Order)
+## Why It Exists
 
-Every AI agent collaborates under a consistent four-part hierarchy:
+Raw code generation often introduces architecture drift, speculative abstractions, and unverifiable claims. AICraft defines deterministic execution rules so implementation quality is consistent across tasks and agents.
 
-```
-1. Constitution    → The mandatory law (15 non-negotiable rules + violation policy)
-2. Workflow        → Standard 7-phase execution lifecycle (Receive to Complete)
-3. Playbook        → Scenario-specific runbooks (Feature, Bug Fix, Refactor, ADR, Review)
-4. Prompt Library  → Deterministic, reusable prompt schemas
-```
+## The 4 Pillars
 
----
+1. Constitution
+2. Workflow
+3. Playbook
+4. Prompt Library
 
-## ⚡ 1-Line Universal Install
+References:
 
-Install AICraft across any detected AI coding environment (**Antigravity**, **Claude Code**, **Cursor**, **Windsurf**, **Codex**):
+- [skills/aicraft/references/constitution.md](skills/aicraft/references/constitution.md)
+- [skills/aicraft/references/workflow.md](skills/aicraft/references/workflow.md)
+- [skills/aicraft/references/playbook.md](skills/aicraft/references/playbook.md)
+- [skills/aicraft/references/prompt-library.md](skills/aicraft/references/prompt-library.md)
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/bishoy-bishai/AICraft/main/install.sh | bash
-```
+## The 7-Phase Workflow
 
-### Targeted Installations:
+1. Receive
+2. Understand
+3. Plan
+4. Implement
+5. Validate
+6. Review
+7. Complete
 
-| Agent / Environment | Command / Installation Method | Target File |
-| :--- | :--- | :--- |
-| **Google Antigravity (`agy`)** | `curl -fsSL ... \| bash -s -- antigravity` | `.agents/skills/aicraft/` or `~/.gemini/config/skills/aicraft/` |
-| **Anthropic Claude Code** | `curl -fsSL ... \| bash -s -- claude` | `~/.claude/skills/aicraft/` (Use via `/aicraft`) |
-| **Cursor AI** | `curl -fsSL ... \| bash -s -- cursor` | `.cursor/rules/aicraft.md` |
-| **Windsurf Cascade** | `curl -fsSL ... \| bash -s -- windsurf` | `.windsurfrules` |
-| **OpenAI Codex / Universal** | `curl -fsSL ... \| bash -s -- codex` | `AGENTS.md` |
+## Ground Truth Rules
 
----
+AICraft explicitly prohibits agents from claiming:
 
-## 📜 The AI Constitution (15 Mandatory Rules)
+- tests passed when tests were not run
+- integrations work without verification
+- requirements exist when they were not supplied
+- files changed when they were not changed
+- architecture decisions were approved without an ADR
+- errors were fixed when they were only suppressed
 
-If any task or prompt conflicts with this Constitution, **the Constitution always wins**.
+## Supported AI Coding Agents
 
-1. **Read before you write:** Inspect 3–5 representative modules, naming, and boundaries before writing code.
-2. **Documentation is the source of truth:** Architecture docs, ADRs, and schemas override assumptions.
-3. **Tasks drive development:** Work only on bounded tasks with clear acceptance criteria.
-4. **Respect the architecture:** Keep code strictly inside its layer (Presentation → Application → Domain → Data → Infrastructure).
-5. **Protect existing decisions:** Never rewrite architectural patterns without an approved ADR.
-6. **Reuse before creating:** Search existing codebase primitives before introducing new abstractions. Capabilities are not entities.
-7. **Keep changes atomic:** Ship the smallest correct change. Never mix refactoring with feature development.
-8. **Update documentation:** Sync living docs, API specs, and schemas whenever behavior changes.
-9. **Think long term:** Write self-explanatory code; avoid speculative complexity.
-10. **Explain decisions:** Ground structural choices in evidence and file citations.
-11. **Never break the Domain:** Business rules and data invariants are inviolable.
-12. **Ask when unsure:** Stop and request clarification when requirements conflict or are ambiguous.
-13. **Respect time:** Deliver clean diffs, verified facts, and zero fluff.
-14. **Leave the project better:** Improve tests and clarity without bloat.
-15. **Protect the vision:** Maintain alignment with overarching repository architecture.
+Supported packaging and installation paths:
 
-### Pre-Implementation Gate:
-Before writing a single line of code, the AI must verify:
-- [x] Do I understand the problem?
-- [x] Do I understand the architecture?
-- [x] Do I understand the domain?
-- [x] Do I understand the task?
+- Claude Code plugin support via [.claude-plugin/plugin.json](.claude-plugin/plugin.json)
+- Agent Skills installation via GitHub repository reference
 
-> **If any answer is "No", DO NOT write code.** Stop and ask.
+Compatibility guidance:
 
----
+- Other clients may apply AICraft as instruction content manually, but that is not claimed as native plugin support.
 
-## 🔄 Standard 7-Phase Execution Workflow
+## Installation
 
-```mermaid
-graph LR
-    P1[1. Receive] --> P2[2. Understand]
-    P2 --> P3[3. Plan]
-    P3 --> P4[4. Implement]
-    P4 --> P5[5. Validate]
-    P5 --> P6[6. Review]
-    P6 --> P7[7. Complete]
-```
+Claude Code plugin:
 
-1. **Receive:** Identify goal, expected outputs, constraints, dependencies.
-2. **Understand:** Read Constitution, architecture docs, ADRs, domain models, and existing code.
-3. **Plan:** Bounded task breakdown, boundary impact, reusable primitives.
-4. **Implement:** Smallest correct change, match style, no speculative abstractions.
-5. **Validate:** Evidentiary verification (compiler, linter, tests with verified output).
-6. **Review:** 8-stage priority review (Architecture → Domain → Correctness → Security → Performance → Readability → Testing → Docs).
-7. **Complete:** Update docs, ADRs, atomic commits.
+1. Use Claude's plugin installation workflow with this repository.
+2. Validate locally with `claude plugin validate . --strict` when CLI is available.
 
----
-
-## 🚫 Ground Truth Non-Negotiables
-
-The AI agent must **NEVER claim**:
-- ✗ tests passed when they were not actually executed
-- ✗ an integration works when it was not verified with real output
-- ✗ a requirement exists when it was not explicitly specified
-- ✗ a file was changed when it was untouched
-- ✗ an architectural pattern was approved when no ADR exists
-- ✗ an error was fixed when it was merely suppressed in a `try/catch` block
-
----
-
-## 📁 Repository Structure
-
-```
-AICraft/
-├── install.sh                  # Universal 1-line multi-agent installer
-├── skill/                      # Core AICraft Skill Package
-│   ├── SKILL.md                # Entrypoint specification standard
-│   ├── constitution.md         # The 15 Rules & Violation Policy
-│   ├── workflow.md             # Standard 7-Phase Execution Workflow
-│   ├── playbook.md             # 8 Scenario Runbooks & Review Priority
-│   ├── prompt-library.md       # Deterministic prompt schemas & templates
-│   └── skills/                 # Deep specialized domain subguides
-│       ├── codebase-discovery.md
-│       ├── architecture.md
-│       ├── task-planning.md
-│       ├── implementation.md
-│       ├── testing.md
-│       ├── code-review.md
-│       ├── security.md
-│       ├── database-review.md
-│       └── ai-behavior.md
-├── src/                        # Interactive Showcase Web Platform
-│   ├── components/             # UI widgets, interactive generators, audit tools
-│   ├── App.tsx                 # Master landing & documentation app
-│   └── index.css               # Design tokens & dark mode styling
-└── .github/workflows/          # Automated GitHub Pages CI/CD deployment
-```
-
----
-
-## 💻 Web Platform Development
-
-The showcase web application is built with **React 19**, **TypeScript**, **Tailwind CSS**, **shadcn**, and **GSAP**:
+Agent Skills:
 
 ```bash
-# Install dependencies
-npm install
-
-# Start local dev server
-npm run dev
-
-# Run type check and production build
-npm run build
+npx skills add bishoy-bishai/AICraft --skill aicraft
 ```
 
----
+Manual skill installation:
 
-## 🏷️ Add the Badge to Your Project
+1. Copy [skills/aicraft](skills/aicraft) into your client skill directory.
+2. Ensure [skills/aicraft/SKILL.md](skills/aicraft/SKILL.md) is the selected skill entrypoint.
 
-If your repository follows the AICraft discipline, add this badge to your `README.md`:
+## Example Prompts
 
-```markdown
-[![Disciplined with AICraft](https://img.shields.io/badge/Disciplined%20with-AICraft-00C781?style=flat-square)](https://github.com/bishoy-bishai/AICraft)
+1. Use AICraft to analyze this repository before implementing the requested feature. First understand the architecture, domain, conventions, and relevant ADRs. Do not write code until the pre-implementation gate is satisfied.
+2. Use AICraft to review this change. Check architecture, domain invariants, correctness, security, performance, readability, testing, and documentation. Only report findings supported by evidence from the repository and diff.
+3. Use AICraft to turn this requirement into a bounded implementation plan. Identify affected boundaries, reusable primitives, acceptance criteria, validation steps, and documentation changes before implementation.
+4. Use AICraft to debug a regression. Reproduce the issue, identify root cause with repository evidence, propose the smallest safe fix, and define verification steps.
+5. Use AICraft to propose an ADR-ready architecture change with trade-offs, boundary impact, migration strategy, and rollback plan.
+
+## Repository Structure
+
+- [.claude-plugin](.claude-plugin)
+- [commands](commands)
+- [skills/aicraft](skills/aicraft)
+- [tests](tests)
+- [validation](validation)
+- [.github/workflows/validate.yml](.github/workflows/validate.yml)
+
+## Validation
+
+Run:
+
+```bash
+python validation/validate.py
+python validation/validate.py --strict
+python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
----
+See [VALIDATION.md](VALIDATION.md) for full contributor and release gates.
 
-## 📄 License
+## Security and Privacy
 
-MIT License — free for all humans and AI agents.
+AICraft performs no runtime telemetry, no hidden data collection, and no network execution scripts in this repository. Validation includes basic secret-pattern and suspicious execution checks.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

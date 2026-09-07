@@ -1,0 +1,28 @@
+{
+  "name": "aicraft",
+  "version": "1.0.0",
+  "description": "AI engineering discipline for coding agents: a Constitution, 7-phase workflow, scenario playbooks, and deterministic prompt library for architecture-respecting, evidence-based software development.",
+  "author": {
+    "name": "Bishoy Bishai",
+    "url": "https://github.com/bishoy-bishai"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/bishoy-bishai/AICraft",
+  "homepage": "https://github.com/bishoy-bishai/AICraft",
+  "keywords": [
+    "agent-skills",
+    "ai-agent",
+    "claude-code",
+    "codex",
+    "cursor",
+    "software-engineering",
+    "engineering-discipline",
+    "architecture",
+    "code-review",
+    "testing",
+    "developer-productivity",
+    "prompt-engineering",
+    "technical-debt",
+    "software-development"
+  ]
+}
